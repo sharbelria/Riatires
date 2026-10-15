@@ -9,6 +9,7 @@ import {
 import { checkoutSchema } from "@/lib/validation";
 import { sendCustomerOrderEmail, sendOwnerOrderEmail } from "@/lib/order-emails";
 import { getPaymentProvider, paymentSignature } from "@/lib/payments";
+import { saveOrder } from "@/lib/submissions";
 
 const fail = (error: string, status = 400) => NextResponse.json({ ok: false, error }, { status });
 
@@ -61,12 +62,16 @@ export async function POST(request: Request) {
     }
 
     // Owner gets the full order now; a second "payment received" email follows from the webhook.
-    await sendOwnerOrderEmail(order, customer, "ממתין לתשלום באשראי – אישור תשלום יישלח במייל נפרד.");
+    await Promise.all([
+      saveOrder(order, customer),
+      sendOwnerOrderEmail(order, customer, "ממתין לתשלום באשראי – אישור תשלום יישלח במייל נפרד."),
+    ]);
     return NextResponse.json({ ok: true, orderId: order.id, redirectUrl });
   }
 
-  const sent = await sendOwnerOrderEmail(order, customer);
-  if (!sent.ok) {
+  const [saved, sent] = await Promise.all([saveOrder(order, customer), sendOwnerOrderEmail(order, customer)]);
+  // The order counts as received if it reached the owner by at least one channel.
+  if (saved !== "saved" && !sent.ok) {
     return fail("שליחת ההזמנה נכשלה. נסו שוב או שלחו לנו הודעה בוואטסאפ.", 502);
   }
   await sendCustomerOrderEmail(order, customer);

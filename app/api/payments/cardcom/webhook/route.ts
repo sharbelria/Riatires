@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { verifySignature } from "@/lib/orders";
 import { verifyCardcomPayment } from "@/lib/payments/cardcom";
 import { sendOwnerPaymentEmail } from "@/lib/order-emails";
+import { savePayment } from "@/lib/submissions";
 
 /**
  * Cardcom calls this URL (server-to-server) after a payment attempt.
@@ -28,7 +29,10 @@ export async function POST(request: Request) {
       console.warn("[cardcom] webhook did not verify", { orderId, amount, payment });
       return NextResponse.json({ ok: true, verified: false });
     }
-    await sendOwnerPaymentEmail(orderId, payment.amount, payment.transactionId);
+    await Promise.all([
+      savePayment({ orderNumber: orderId, amount: payment.amount, provider: "cardcom", transactionId: payment.transactionId }),
+      sendOwnerPaymentEmail(orderId, payment.amount, payment.transactionId),
+    ]);
     return NextResponse.json({ ok: true, verified: true });
   } catch (err) {
     console.error("[cardcom] webhook error", err);

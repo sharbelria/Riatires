@@ -88,6 +88,8 @@ cp .env.example .env.local
 
 | Variable                   | Required    | Purpose                                                                 |
 | -------------------------- | ----------- | ----------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`  | yes         | Supabase project URL (dashboard → Connect)                              |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | yes | Supabase **publishable** key (`sb_publishable_...`)          |
 | `NEXT_PUBLIC_SITE_URL`     | production  | Your public address, e.g. `https://www.riatires.co.il`                  |
 | `ORDER_SECRET`             | production  | Long random string that signs order links and payment callbacks          |
 | `SMTP_USER`                | email (A)   | Your Gmail address                                                      |
@@ -139,7 +141,7 @@ The adapter is in `lib/payments/cardcom.ts`. Field names follow Cardcom's API v1
 
 1. Push the project to a GitHub repository.
 2. Go to https://vercel.com → **Add New → Project** → import the repository. Framework: Next.js (auto-detected).
-3. Under **Environment Variables** add everything from your `.env.local` (`NEXT_PUBLIC_SITE_URL`, `ORDER_SECRET`, `SMTP_USER`, `SMTP_PASS`, `PAYMENT_PROVIDER`, `CARDCOM_*`).
+3. Under **Environment Variables** add everything from your `.env.local` (`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `ORDER_SECRET`, `SMTP_USER`, `SMTP_PASS`, `PAYMENT_PROVIDER`, `CARDCOM_*`).
 4. Click **Deploy**.
 5. Add your domain under **Settings → Domains**, then set `NEXT_PUBLIC_SITE_URL` to it and redeploy.
 
@@ -172,9 +174,24 @@ lib/tires.ts            catalog + price calculation (server only)
 lib/orders.ts           order pricing and signed order links
 lib/payments/           payment gateway adapters
 lib/email.ts            email sending (Gmail/SMTP or Resend)
+lib/submissions.ts      saves orders, items, payments and callback requests to Supabase
+lib/supabase/           Supabase client (server) and generated database types
+supabase/migrations/    database tables, permissions and row level security
 ```
 
-Orders are not stored in a database: each order is emailed to you, and the confirmation link carries a signed, tamper-proof summary. If you want an order history dashboard later, a database (e.g. Vercel Postgres or Supabase) can be added.
+### Database (Supabase)
+
+Every order (with its items), every confirmed card payment and every callback request is saved to Supabase **and** emailed to you. An order counts as received if it reaches you through at least one of the two.
+
+See them in the Supabase dashboard → **Table Editor**: `orders`, `order_items`, `order_payments`, `contact_requests`. You can change an order's `status` there (`new` → `confirmed` → `installed`).
+
+No login is needed to submit. Security model (`supabase/migrations/`):
+
+- Visitors (the `anon` role, via the publishable key) can only **insert** rows. They cannot read, edit or delete anything, so one customer can never see another customer's order.
+- Row Level Security is on for every table, and visitors cannot set an order's status.
+- The website saves orders from the server after validating them and recalculating prices from `data/tires.json`.
+
+Known limit: because the publishable key is public by design, someone technical could insert junk rows directly (they still can't read anything). Database checks limit what can be inserted. If spam ever becomes a problem, add rate limiting or switch the server to a secret key.
 
 ---
 
@@ -245,10 +262,13 @@ npm run dev
 
 מעתיקים את `.env.example` לקובץ חדש בשם `.env.local` וממלאים:
 
+- **NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY**: מ-Supabase (לוח הבקרה ← Connect). משתמשים במפתח ה-publishable בלבד, לא במפתח הסודי.
 - **ORDER_SECRET**: מחרוזת אקראית ארוכה (32 תווים ומעלה). חובה בפרודקשן.
 - **SMTP_USER / SMTP_PASS** (הכי פשוט, דרך Gmail): מפעילים ״אימות דו-שלבי״ בחשבון Google, יוצרים ״סיסמת אפליקציה״ ב-https://myaccount.google.com/apppasswords, ומכניסים את כתובת ה-Gmail ואת 16 האותיות של סיסמת האפליקציה (לא הסיסמה הרגילה!).
 - **RESEND_API_KEY** (חלופה): נרשמים ב-https://resend.com ומאמתים דומיין. משמש רק אם SMTP ריק.
 - **PAYMENT_PROVIDER=cardcom** + **CARDCOM_TERMINAL_NUMBER** + **CARDCOM_API_NAME**: מקבלים מ-Cardcom.
+
+**מסד נתונים (Supabase):** כל הזמנה, תשלום באשראי ובקשת חזרה נשמרים ב-Supabase וגם נשלחים במייל. רואים אותם בלוח הבקרה של Supabase ← Table Editor. גולשים יכולים רק להוסיף שורות (בלי התחברות), ולא יכולים לקרוא, לשנות או למחוק נתונים.
 
 **מה נשלח במייל:** כל הזמנה (בכל אמצעי תשלום) נשלחת אליכם עם שם, טלפון, עיר, פריטים, מידות, כמויות, סה״כ ואמצעי תשלום. אם הלקוח השאיר מייל, הוא מקבל אישור (בהזמנות מזומן/מייל). בהזמנת אשראי תקבלו מייל ״הזמנה חדשה״ מיד, ומייל ״✅ התשלום התקבל״ אחרי ש-Cardcom מאשרת את התשלום.
 

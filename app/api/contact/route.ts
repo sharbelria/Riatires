@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { contactSchema } from "@/lib/validation";
 import { emailLayout, escapeHtml, ownerEmail, sendEmail } from "@/lib/email";
+import { saveContactRequest } from "@/lib/submissions";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -20,8 +21,11 @@ export async function POST(request: Request) {
      <p><b>מידת צמיג / דגם רכב:</b> ${escapeHtml(details || "—")}</p>`,
   );
 
-  const result = await sendEmail({ to: ownerEmail(), subject: `בקשה לחזרה – ${name}`, html });
-  if (!result.ok) {
+  const [saved, result] = await Promise.all([
+    saveContactRequest({ name, phone, details }),
+    sendEmail({ to: ownerEmail(), subject: `בקשה לחזרה – ${name}`, html }),
+  ]);
+  if (saved !== "saved" && !result.ok) {
     return NextResponse.json({ ok: false, error: "שליחת הפנייה נכשלה, נסו שוב או פנו בוואטסאפ" }, { status: 502 });
   }
   return NextResponse.json({ ok: true });
