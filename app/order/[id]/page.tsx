@@ -4,9 +4,8 @@ import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import { decodeSummary, paymentLabels } from "@/lib/orders";
 import { formatPrice } from "@/lib/format";
-import { siteConfig, whatsappLink } from "@/lib/site-config";
-import { WhatsAppIcon } from "@/components/icons";
 import { ClearCart } from "@/components/cart/clear-cart";
+import { OrderWhatsAppButton } from "@/components/order/order-whatsapp-button";
 
 export const metadata: Metadata = {
   title: "אישור הזמנה",
@@ -92,14 +91,13 @@ async function OrderDetails({ params, searchParams }: Props) {
       )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-        <a
-          href={whatsappLink(`שלום ${siteConfig.name}, ביצעתי הזמנה${safeId ? ` מספר ${safeId}` : ""} ואשמח לתאם התקנה`)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 font-bold text-white"
-        >
-          <WhatsAppIcon /> תיאום התקנה בוואטסאפ
-        </a>
+        <OrderWhatsAppButton
+          orderId={safeId}
+          lines={order?.lines}
+          total={order?.total}
+          paymentLabel={order ? paymentLabels[order.method] : undefined}
+          paid={order?.method === "card" && paid}
+        />
         <Link
           href="/"
           className="inline-flex items-center justify-center rounded-xl border-2 border-line px-6 py-3 font-bold hover:border-brand"

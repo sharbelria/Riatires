@@ -9,6 +9,7 @@ import type { PaymentMethod } from "@/lib/validation";
 import { formatPrice } from "@/lib/format";
 import { cart } from "@/lib/cart-store";
 import { useCartLines } from "@/components/cart/use-cart-lines";
+import { saveOrderContact } from "@/lib/order-contact";
 
 const methods: { value: PaymentMethod; label: string; hint: string; icon: typeof CreditCard }[] = [
   { value: "card", label: "תשלום באשראי", hint: "מעבר לדף תשלום מאובטח של חברת הסליקה", icon: CreditCard },
@@ -38,6 +39,13 @@ export function CheckoutForm({ catalog }: { catalog: Tire[] }) {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
+    const customer = {
+      name: String(f.get("name") ?? ""),
+      phone: String(f.get("phone") ?? ""),
+      city: String(f.get("city") ?? ""),
+      email: String(f.get("email") ?? ""),
+      notes: String(f.get("notes") ?? ""),
+    };
     setSending(true);
     setError(null);
     try {
@@ -45,13 +53,7 @@ export function CheckoutForm({ catalog }: { catalog: Tire[] }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          customer: {
-            name: f.get("name"),
-            phone: f.get("phone"),
-            city: f.get("city"),
-            email: f.get("email"),
-            notes: f.get("notes"),
-          },
+          customer,
           // only ids + quantities – the server calculates all prices
           items: lines.map((l) => ({ id: l.tire.id, qty: l.qty })),
           paymentMethod: method,
@@ -60,9 +62,12 @@ export function CheckoutForm({ catalog }: { catalog: Tire[] }) {
       const json = (await res.json().catch(() => ({ ok: false }))) as {
         ok: boolean;
         error?: string;
+        orderId?: string;
         redirectUrl?: string;
       };
       if (!json.ok || !json.redirectUrl) throw new Error(json.error);
+      // kept in this browser tab only, so the WhatsApp message can include the customer's details
+      if (json.orderId) saveOrderContact({ orderId: json.orderId, ...customer });
 
       if (method === "card") {
         // keep the cart until payment succeeds (cleared on the confirmation page)
