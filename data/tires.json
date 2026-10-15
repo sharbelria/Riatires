@@ -1,0 +1,62 @@
+[
+  {
+    "id": "205-55-16-michelin-primacy4",
+    "brand": "Michelin",
+    "model": "Primacy 4+",
+    "width": 205,
+    "profile": 55,
+    "rim": 16,
+    "supplierPrice": 420,
+    "inStock": true
+  },
+  {
+    "id": "205-55-16-hankook-ventus",
+    "brand": "Hankook",
+    "model": "Ventus Prime 4",
+    "width": 205,
+    "profile": 55,
+    "rim": 16,
+    "supplierPrice": 310,
+    "inStock": true
+  },
+  {
+    "id": "195-65-15-bridgestone-turanza",
+    "brand": "Bridgestone",
+    "model": "Turanza 6",
+    "width": 195,
+    "profile": 65,
+    "rim": 15,
+    "supplierPrice": 340,
+    "inStock": true
+  },
+  {
+    "id": "195-65-15-kumho-ecsta",
+    "brand": "Kumho",
+    "model": "Ecsta HS52",
+    "width": 195,
+    "profile": 65,
+    "rim": 15,
+    "supplierPrice": 255,
+    "inStock": false
+  },
+  {
+    "id": "225-45-17-continental-premium",
+    "brand": "Continental",
+    "model": "PremiumContact 7",
+    "width": 225,
+    "profile": 45,
+    "rim": 17,
+    "supplierPrice": 480,
+    "inStock": true
+  },
+  {
+    "id": "225-45-17-pirelli-cinturato",
+    "brand": "Pirelli",
+    "model": "Cinturato P7",
+    "width": 225,
+    "profile": 45,
+    "rim": 17,
+    "supplierPrice": 455,
+    "inStock": true
+  }
+]
