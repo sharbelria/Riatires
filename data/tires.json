@@ -1,62 +1,52 @@
 [
-  {
-    "id": "205-55-16-michelin-primacy4",
-    "brand": "Michelin",
-    "model": "Primacy 4+",
-    "width": 205,
-    "profile": 55,
-    "rim": 16,
-    "supplierPrice": 420,
-    "inStock": true
-  },
-  {
-    "id": "205-55-16-hankook-ventus",
-    "brand": "Hankook",
-    "model": "Ventus Prime 4",
-    "width": 205,
-    "profile": 55,
-    "rim": 16,
-    "supplierPrice": 310,
-    "inStock": true
-  },
-  {
-    "id": "195-65-15-bridgestone-turanza",
-    "brand": "Bridgestone",
-    "model": "Turanza 6",
-    "width": 195,
-    "profile": 65,
-    "rim": 15,
-    "supplierPrice": 340,
-    "inStock": true
-  },
-  {
-    "id": "195-65-15-kumho-ecsta",
-    "brand": "Kumho",
-    "model": "Ecsta HS52",
-    "width": 195,
-    "profile": 65,
-    "rim": 15,
-    "supplierPrice": 255,
-    "inStock": false
-  },
-  {
-    "id": "225-45-17-continental-premium",
-    "brand": "Continental",
-    "model": "PremiumContact 7",
-    "width": 225,
-    "profile": 45,
-    "rim": 17,
-    "supplierPrice": 480,
-    "inStock": true
-  },
-  {
-    "id": "225-45-17-pirelli-cinturato",
-    "brand": "Pirelli",
-    "model": "Cinturato P7",
-    "width": 225,
-    "profile": 45,
-    "rim": 17,
-    "supplierPrice": 455,
-    "inStock": true
-  }
+  { "id": "175-65-14-ilink-l-grip55", "supplierCode": "175651468", "brand": "iLink", "model": "L-GRIP55 82H", "width": 175, "profile": 65, "rim": 14, "supplierPrice": 59, "inStock": true },
+  { "id": "175-65-14-dunlop-sp-fm800", "supplierCode": "1756514800", "brand": "Dunlop", "model": "SP FM800 82H", "width": 175, "profile": 65, "rim": 14, "supplierPrice": 198, "inStock": true },
+
+  { "id": "185-55-15-roadx-rxmotion-h12", "supplierCode": "1855515H12", "brand": "RoadX", "model": "RXMOTION H12 82V", "width": 185, "profile": 55, "rim": 15, "supplierPrice": 59, "inStock": true },
+  { "id": "185-55-15-dunlop-sp-fm800-86v", "supplierCode": "1855515800V", "brand": "Dunlop", "model": "SP FM800 86V XL", "width": 185, "profile": 55, "rim": 15, "supplierPrice": 256, "inStock": true },
+
+  { "id": "185-60-15-ilink-l-grip55", "supplierCode": "185601568XL", "brand": "iLink", "model": "L-GRIP55 88H", "width": 185, "profile": 60, "rim": 15, "supplierPrice": 69, "inStock": true },
+  { "id": "185-60-15-dunlop-sp-fm800", "supplierCode": "1856015800", "brand": "Dunlop", "model": "SP FM800 84H", "width": 185, "profile": 60, "rim": 15, "supplierPrice": 172, "inStock": true },
+
+  { "id": "185-65-15-ilink-l-grip66-55", "supplierCode": "185651566", "brand": "iLink", "model": "L-GRIP66/55 88H", "width": 185, "profile": 65, "rim": 15, "supplierPrice": 69, "inStock": true },
+  { "id": "185-65-15-dunlop-sp-fm800", "supplierCode": "1856515800", "brand": "Dunlop", "model": "SP FM800 88H", "width": 185, "profile": 65, "rim": 15, "supplierPrice": 205, "inStock": true },
+
+  { "id": "195-65-15-ilink-l-comfort", "supplierCode": "195651568", "brand": "iLink", "model": "L-COMFORT 91V", "width": 195, "profile": 65, "rim": 15, "supplierPrice": 72, "inStock": true },
+  { "id": "195-65-15-dunlop-sp-fm800-91h-51", "supplierCode": "1956515800", "brand": "Dunlop", "model": "SP FM800 91H 51 PSI", "width": 195, "profile": 65, "rim": 15, "supplierPrice": 195, "inStock": true },
+
+  { "id": "205-55-16-ilink-l-grip55", "supplierCode": "205551668", "brand": "iLink", "model": "L-GRIP55 91V", "width": 205, "profile": 55, "rim": 16, "supplierPrice": 72, "inStock": true },
+  { "id": "205-55-16-dunlop-bluresponse-sp-tg", "supplierCode": "2055516BLR", "brand": "Dunlop", "model": "BluResponse SP TG 91V", "width": 205, "profile": 55, "rim": 16, "supplierPrice": 226, "inStock": true },
+
+  { "id": "205-60-16-ilink-l-grip55", "supplierCode": "205601666", "brand": "iLink", "model": "L-GRIP55 92V", "width": 205, "profile": 60, "rim": 16, "supplierPrice": 79, "inStock": true },
+  { "id": "205-60-16-dunlop-sp-fm800", "supplierCode": "2056016800", "brand": "Dunlop", "model": "SP FM800 92H", "width": 205, "profile": 60, "rim": 16, "supplierPrice": 259, "inStock": true },
+
+  { "id": "205-50-17-roadx-rxmotion-du71-93w", "supplierCode": "2055017DU71", "brand": "RoadX", "model": "RXMOTION DU71 93W XL", "width": 205, "profile": 50, "rim": 17, "supplierPrice": 89, "inStock": true },
+  { "id": "205-50-17-dunlop-sp-fm800-93w", "supplierCode": "2055017800", "brand": "Dunlop", "model": "SP FM800 93W XL", "width": 205, "profile": 50, "rim": 17, "supplierPrice": 265, "inStock": true },
+
+  { "id": "205-55-17-ilink-l-zeal56", "supplierCode": "205551756", "brand": "iLink", "model": "L-ZEAL56 95W", "width": 205, "profile": 55, "rim": 17, "supplierPrice": 89, "inStock": true },
+  { "id": "205-55-17-dunlop-bluresponse-sp-tg", "supplierCode": "2055517BLR", "brand": "Dunlop", "model": "BluResponse SP TG 91V", "width": 205, "profile": 55, "rim": 17, "supplierPrice": 300, "inStock": true },
+
+  { "id": "215-55-17-roadx-rxmotion-du71-98w", "supplierCode": "2155517DU71", "brand": "RoadX", "model": "RXMOTION DU71 98W XL", "width": 215, "profile": 55, "rim": 17, "supplierPrice": 99, "inStock": true },
+  { "id": "215-55-17-dunlop-sp-fm800", "supplierCode": "2155517800W", "brand": "Dunlop", "model": "SP FM800 94W", "width": 215, "profile": 55, "rim": 17, "supplierPrice": 313, "inStock": true },
+
+  { "id": "225-45-17-ilink-l-zeal56-94w", "supplierCode": "225451756", "brand": "iLink", "model": "L-ZEAL56 94W XL", "width": 225, "profile": 45, "rim": 17, "supplierPrice": 79, "inStock": true },
+  { "id": "225-45-17-dunlop-bluresponse-sp-tg-94w", "supplierCode": "2254517BLR", "brand": "Dunlop", "model": "BluResponse SP TG 94W XL", "width": 225, "profile": 45, "rim": 17, "supplierPrice": 344, "inStock": true },
+
+  { "id": "225-65-17-massimo-stella-s2", "supplierCode": "2256517MASS", "brand": "Massimo", "model": "STELLA S2 102V", "width": 225, "profile": 65, "rim": 17, "supplierPrice": 99, "inStock": true },
+  { "id": "225-65-17-dunlop-bluresponse-sp-tg", "supplierCode": "2256517BLR", "brand": "Dunlop", "model": "BluResponse SP TG 102V", "width": 225, "profile": 65, "rim": 17, "supplierPrice": 438, "inStock": true },
+
+  { "id": "215-45-18-roadx-rxmotion-u11-93y", "supplierCode": "2154518U11", "brand": "RoadX", "model": "RXMOTION U11 93Y XL", "width": 215, "profile": 45, "rim": 18, "supplierPrice": 99, "inStock": true },
+  { "id": "215-45-18-dunlop-sp-maxx-tt", "supplierCode": "2154518MAXTT", "brand": "Dunlop", "model": "SP MAXX TT 89W", "width": 215, "profile": 45, "rim": 18, "supplierPrice": 477, "inStock": true },
+
+  { "id": "225-55-18-ilink-l-zeal56", "supplierCode": "225551856", "brand": "iLink", "model": "L-ZEAL56 102W", "width": 225, "profile": 55, "rim": 18, "supplierPrice": 119, "inStock": true },
+  { "id": "225-55-18-dunlop-sp-fm800", "supplierCode": "2255518800", "brand": "Dunlop", "model": "SP FM800 98H", "width": 225, "profile": 55, "rim": 18, "supplierPrice": 352, "inStock": true },
+
+  { "id": "225-60-18-ilink-powercity-79", "supplierCode": "225601879", "brand": "iLink", "model": "POWERCITY 79 104H", "width": 225, "profile": 60, "rim": 18, "supplierPrice": 99, "inStock": true },
+  { "id": "225-60-18-dunlop-bluresponse-sp-tg", "supplierCode": "2256018BLRSPTG", "brand": "Dunlop", "model": "BluResponse SP TG 100V", "width": 225, "profile": 60, "rim": 18, "supplierPrice": 459, "inStock": true },
+
+  { "id": "235-50-18-transmate-sport-d1", "supplierCode": "2355018TRAN", "brand": "Transmate", "model": "SPORT D1 101W", "width": 235, "profile": 50, "rim": 18, "supplierPrice": 119, "inStock": true },
+  { "id": "235-50-18-dunlop-sp-maxx-060-101y", "supplierCode": "2355018060", "brand": "Dunlop", "model": "SP MAXX 060 101Y XL", "width": 235, "profile": 50, "rim": 18, "supplierPrice": 442, "inStock": true },
+
+  { "id": "235-55-18-transmate-sport-d1", "supplierCode": "2355518TRAN", "brand": "Transmate", "model": "SPORT D1 104W", "width": 235, "profile": 55, "rim": 18, "supplierPrice": 119, "inStock": true },
+  { "id": "235-55-18-dunlop-sp-maxx-060-104y", "supplierCode": "2355518060", "brand": "Dunlop", "model": "SP MAXX 060+ 104Y XL", "width": 235, "profile": 55, "rim": 18, "supplierPrice": 498, "inStock": true }
 ]

@@ -18,10 +18,20 @@ export function formatSize(t: SizeOption): string {
   return `${t.width}/${t.profile}R${t.rim}`;
 }
 
-const catalog: Tire[] = (rawTires as TireRecord[]).map(({ supplierPrice, ...t }) => ({
-  ...t,
-  price: sellingPrice(supplierPrice),
-  size: formatSize(t),
+const records = rawTires as TireRecord[];
+
+// Public catalog: supplier price and code are stripped so they never reach the browser.
+const catalog: Tire[] = records.map((r) => ({
+  id: r.id,
+  brand: r.brand,
+  model: r.model,
+  width: r.width,
+  profile: r.profile,
+  rim: r.rim,
+  inStock: r.inStock,
+  image: r.image,
+  price: sellingPrice(r.supplierPrice),
+  size: formatSize(r),
 }));
 
 export function getAllTires(): Tire[] {
@@ -30,6 +40,11 @@ export function getAllTires(): Tire[] {
 
 export function getTireById(id: string): Tire | undefined {
   return catalog.find((t) => t.id === id);
+}
+
+/** Supplier catalog number, for the owner's order email only. */
+export function getSupplierCode(id: string): string | undefined {
+  return records.find((r) => r.id === id)?.supplierCode;
 }
 
 export function findTires(width: number, profile: number, rim: number): Tire[] {

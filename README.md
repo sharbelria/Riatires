@@ -54,6 +54,7 @@ Every tire is one object in the list:
 | `profile`       | Profile / aspect ratio, e.g. `55`.                                                        |
 | `rim`           | Rim diameter in inches, e.g. `16`.                                                        |
 | `supplierPrice` | **Your cost per tire in ₪, before VAT.** The site price is calculated from it.            |
+| `supplierCode`  | Optional. The supplier's item code (קוד פריט). Shown only in your order emails, never on the site. |
 | `inStock`       | `true` = "במלאי", `false` = "בהזמנה מיוחדת" (still orderable).                              |
 | `image`         | Optional. Put the picture in `public/tires/` and write `/tires/file.png`.                  |
 
@@ -135,7 +136,7 @@ To update prices later: edit `data/tires.json`, commit and push. Vercel redeploy
 
 ### 6. Before going live – checklist
 
-- [ ] Replace the 6 sample rows in `data/tires.json` with your real price list.
+- [ ] Check `data/tires.json` against your current supplier price list (it was loaded from the holiday-promo list valid until 30.9.2026).
 - [ ] Edit the texts in `app/about`, `app/terms`, `app/privacy`, `app/accessibility` (marked "טקסט לדוגמה").
 - [ ] Replace the sample testimonials in `components/home/sections.tsx`.
 - [ ] Set address and hours in `lib/site-config.ts`.
@@ -205,6 +206,7 @@ npm run dev
 - **brand / model**: שם המותג והדגם.
 - **width / profile / rim**: רוחב, חתך וקוטר, כמספרים בלי מרכאות.
 - **supplierPrice**: **מחיר הספק לצמיג בש״ח, לפני מע״מ.**
+- **supplierCode** (לא חובה): קוד הפריט אצל הספק. מופיע רק במייל ההזמנה שלכם, לא באתר.
 - **inStock**: ‏`true` מציג ״במלאי״, ‏`false` מציג ״בהזמנה מיוחדת״.
 - **image** (לא חובה): שמים את התמונה בתיקייה `public/tires/` וכותבים `/tires/שם-הקובץ.png`.
 
@@ -256,7 +258,7 @@ npm run dev
 
 ### 6. לפני העלייה לאוויר
 
-- [ ] להחליף את 6 שורות הדוגמה ב-`data/tires.json` במחירון האמיתי.
+- [ ] לוודא שהמחירים ב-`data/tires.json` תואמים למחירון העדכני של הספק (נטען ממבצע החגים שתוקפו עד 30.9.2026).
 - [ ] לערוך את הטקסטים בדפי אודות, תקנון, פרטיות ונגישות (מסומנים ״טקסט לדוגמה״).
 - [ ] להחליף את ההמלצות לדוגמה ב-`components/home/sections.tsx`.
 - [ ] לעדכן כתובת ושעות פעילות ב-`lib/site-config.ts`.

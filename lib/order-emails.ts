@@ -3,20 +3,23 @@ import { emailLayout, escapeHtml, ownerEmail, sendEmail } from "@/lib/email";
 import { formatPrice } from "@/lib/format";
 import { paymentLabels, type OrderSummary } from "@/lib/orders";
 import { siteConfig } from "@/lib/site-config";
+import { getSupplierCode } from "@/lib/tires";
 
 export type Customer = { name: string; phone: string; city: string; email?: string; notes?: string };
 
-function itemsTable(order: OrderSummary) {
+function itemsTable(order: OrderSummary, withSupplierCode = false) {
   const rows = order.lines
-    .map(
-      (l) => `<tr>
-<td style="padding:8px;border-bottom:1px solid #eee" dir="ltr">${escapeHtml(l.brand)} ${escapeHtml(l.model)}</td>
+    .map((l) => {
+      const code = withSupplierCode ? getSupplierCode(l.id) : undefined;
+      const codeHtml = code ? `<br><span style="color:#55565b;font-size:12px">קוד ספק: ${escapeHtml(code)}</span>` : "";
+      return `<tr>
+<td style="padding:8px;border-bottom:1px solid #eee" dir="ltr">${escapeHtml(l.brand)} ${escapeHtml(l.model)}${codeHtml}</td>
 <td style="padding:8px;border-bottom:1px solid #eee" dir="ltr">${escapeHtml(l.size)}</td>
 <td style="padding:8px;border-bottom:1px solid #eee;text-align:center">${l.qty}</td>
 <td style="padding:8px;border-bottom:1px solid #eee">${formatPrice(l.unitPrice)}</td>
 <td style="padding:8px;border-bottom:1px solid #eee;font-weight:bold">${formatPrice(l.lineTotal)}</td>
-</tr>`,
-    )
+</tr>`;
+    })
     .join("");
   return `<table style="width:100%;border-collapse:collapse;font-size:14px;margin:12px 0" dir="rtl">
 <thead><tr style="background:#f5f5f6;text-align:right">
@@ -36,7 +39,7 @@ export async function sendOwnerOrderEmail(order: OrderSummary, customer: Custome
 <p><b>מייל:</b> ${c.email ? escapeHtml(c.email) : "—"}</p>
 <p><b>אמצעי תשלום:</b> ${paymentLabels[order.method]}</p>
 ${c.notes ? `<p><b>הערות:</b> ${escapeHtml(c.notes)}</p>` : ""}
-${itemsTable(order)}
+${itemsTable(order, true)}
 <p style="color:#55565b;font-size:12px">התקבלה: ${new Date(order.createdAt).toLocaleString("he-IL", { timeZone: "Asia/Jerusalem" })}</p>`,
   );
   return sendEmail({
