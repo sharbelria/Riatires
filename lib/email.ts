@@ -1,4 +1,5 @@
 import "server-only";
+import nodemailer, { type Transporter } from "nodemailer";
 import { siteConfig } from "@/lib/site-config";
 
 type Mail = { to: string | string[]; subject: string; html: string; replyTo?: string };
@@ -6,19 +7,54 @@ type Mail = { to: string | string[]; subject: string; html: string; replyTo?: st
 export type SendResult = { ok: true; id?: string; skipped?: boolean } | { ok: false; error: string };
 
 /**
- * Sends email through Resend (https://resend.com) using its REST API.
- * Needs RESEND_API_KEY and EMAIL_FROM in .env.local.
- * Without a key (local development) the email is printed to the console instead.
+ * Sends email with the first service that is configured in .env.local:
+ *   1. Gmail / any SMTP server – SMTP_USER + SMTP_PASS (Gmail: an App Password)
+ *   2. Resend (https://resend.com) – RESEND_API_KEY
+ * With neither (local development) the email is printed to the console instead.
  */
 export async function sendEmail(mail: Mail): Promise<SendResult> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM ?? `${siteConfig.name} <onboarding@resend.dev>`;
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) return sendViaSmtp(mail);
+  if (process.env.RESEND_API_KEY) return sendViaResend(mail, process.env.RESEND_API_KEY);
 
-  if (!apiKey) {
-    console.warn(`[email] RESEND_API_KEY missing – email not sent. Subject: "${mail.subject}" → ${mail.to}`);
-    return { ok: true, skipped: true };
+  console.warn(`[email] no email service configured – email not sent. Subject: "${mail.subject}" → ${mail.to}`);
+  return { ok: true, skipped: true };
+}
+
+let transporter: Transporter | null = null;
+
+function smtp() {
+  if (!transporter) {
+    const port = Number(process.env.SMTP_PORT ?? 465);
+    transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST ?? "smtp.gmail.com",
+      port,
+      secure: port === 465, // 465 = TLS from the start; 587 upgrades with STARTTLS
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    });
   }
+  return transporter;
+}
 
+async function sendViaSmtp(mail: Mail): Promise<SendResult> {
+  // Gmail only sends "from" the signed-in account (or its verified aliases).
+  const from = process.env.EMAIL_FROM ?? `${siteConfig.name} <${process.env.SMTP_USER}>`;
+  try {
+    const info = await smtp().sendMail({
+      from,
+      to: mail.to,
+      subject: mail.subject,
+      html: mail.html,
+      replyTo: mail.replyTo,
+    });
+    return { ok: true, id: info.messageId };
+  } catch (err) {
+    console.error("[email] SMTP send failed", err);
+    return { ok: false, error: "smtp" };
+  }
+}
+
+async function sendViaResend(mail: Mail, apiKey: string): Promise<SendResult> {
+  const from = process.env.EMAIL_FROM ?? `${siteConfig.name} <onboarding@resend.dev>`;
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",

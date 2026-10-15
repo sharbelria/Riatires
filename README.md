@@ -90,20 +90,31 @@ cp .env.example .env.local
 | -------------------------- | ----------- | ----------------------------------------------------------------------- |
 | `NEXT_PUBLIC_SITE_URL`     | production  | Your public address, e.g. `https://www.riatires.co.il`                  |
 | `ORDER_SECRET`             | production  | Long random string that signs order links and payment callbacks          |
-| `RESEND_API_KEY`           | yes         | Sends order emails                                                      |
-| `EMAIL_FROM`               | yes         | Sender, on a domain verified in Resend                                  |
+| `SMTP_USER`                | email (A)   | Your Gmail address                                                      |
+| `SMTP_PASS`                | email (A)   | Gmail **App Password** (not your normal password)                       |
+| `SMTP_HOST` / `SMTP_PORT`  | no          | Only for a non-Gmail mail server (defaults: `smtp.gmail.com` / `465`)   |
+| `RESEND_API_KEY`           | email (B)   | Alternative to Gmail: sends through Resend                              |
+| `EMAIL_FROM`               | no          | Sender name/address (Gmail default: `Riatires <your Gmail>`)            |
 | `ORDER_EMAIL_TO`           | no          | Who receives orders (defaults to the email in `site-config.ts`)         |
 | `PAYMENT_PROVIDER`         | for credit  | `cardcom` (real) or `mock` (local test gateway)                          |
 | `CARDCOM_TERMINAL_NUMBER`  | for credit  | From your Cardcom account                                               |
 | `CARDCOM_API_NAME`         | for credit  | From your Cardcom account                                               |
 
-**Email (Resend):**
+**Email, option A: Gmail (easiest)**
+
+1. In your Google account, turn on **2-Step Verification** (Security → 2-Step Verification).
+2. Open https://myaccount.google.com/apppasswords, create an app password named "Riatires", and copy the 16 letters.
+3. In `.env.local` set `SMTP_USER=your@gmail.com` and `SMTP_PASS=` the 16 letters (no spaces).
+4. Restart `npm run dev` and place a test order. The email arrives in your Gmail, sent from your own address.
+
+Gmail allows about 500 emails a day, which is plenty for orders. Never use your normal Gmail password here.
+
+**Email, option B: Resend** (used only if `SMTP_USER`/`SMTP_PASS` are empty)
 
 1. Sign up at https://resend.com and create an API key → `RESEND_API_KEY`.
-2. Add and verify your domain (Domains → Add) so you can send from e.g. `orders@your-domain.co.il` → `EMAIL_FROM`.
-3. Until the domain is verified, `onboarding@resend.dev` works but only delivers to the email you signed up with.
+2. Verify your domain so you can send from e.g. `orders@your-domain.co.il` → `EMAIL_FROM`.
 
-Without `RESEND_API_KEY` (local development), emails are printed to the terminal instead of being sent.
+With no email service configured (local development), emails are printed to the terminal instead of being sent.
 
 **What gets emailed:**
 
@@ -128,7 +139,7 @@ The adapter is in `lib/payments/cardcom.ts`. Field names follow Cardcom's API v1
 
 1. Push the project to a GitHub repository.
 2. Go to https://vercel.com → **Add New → Project** → import the repository. Framework: Next.js (auto-detected).
-3. Under **Environment Variables** add everything from your `.env.local` (`NEXT_PUBLIC_SITE_URL`, `ORDER_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`, `PAYMENT_PROVIDER`, `CARDCOM_*`).
+3. Under **Environment Variables** add everything from your `.env.local` (`NEXT_PUBLIC_SITE_URL`, `ORDER_SECRET`, `SMTP_USER`, `SMTP_PASS`, `PAYMENT_PROVIDER`, `CARDCOM_*`).
 4. Click **Deploy**.
 5. Add your domain under **Settings → Domains**, then set `NEXT_PUBLIC_SITE_URL` to it and redeploy.
 
@@ -160,7 +171,7 @@ lib/site-config.ts      contact details and pricing rules
 lib/tires.ts            catalog + price calculation (server only)
 lib/orders.ts           order pricing and signed order links
 lib/payments/           payment gateway adapters
-lib/email.ts            Resend email sending
+lib/email.ts            email sending (Gmail/SMTP or Resend)
 ```
 
 Orders are not stored in a database: each order is emailed to you, and the confirmation link carries a signed, tamper-proof summary. If you want an order history dashboard later, a database (e.g. Vercel Postgres or Supabase) can be added.
@@ -235,7 +246,8 @@ npm run dev
 מעתיקים את `.env.example` לקובץ חדש בשם `.env.local` וממלאים:
 
 - **ORDER_SECRET**: מחרוזת אקראית ארוכה (32 תווים ומעלה). חובה בפרודקשן.
-- **RESEND_API_KEY / EMAIL_FROM**: נרשמים ב-https://resend.com, יוצרים מפתח API ומאמתים את הדומיין שלכם.
+- **SMTP_USER / SMTP_PASS** (הכי פשוט, דרך Gmail): מפעילים ״אימות דו-שלבי״ בחשבון Google, יוצרים ״סיסמת אפליקציה״ ב-https://myaccount.google.com/apppasswords, ומכניסים את כתובת ה-Gmail ואת 16 האותיות של סיסמת האפליקציה (לא הסיסמה הרגילה!).
+- **RESEND_API_KEY** (חלופה): נרשמים ב-https://resend.com ומאמתים דומיין. משמש רק אם SMTP ריק.
 - **PAYMENT_PROVIDER=cardcom** + **CARDCOM_TERMINAL_NUMBER** + **CARDCOM_API_NAME**: מקבלים מ-Cardcom.
 
 **מה נשלח במייל:** כל הזמנה (בכל אמצעי תשלום) נשלחת אליכם עם שם, טלפון, עיר, פריטים, מידות, כמויות, סה״כ ואמצעי תשלום. אם הלקוח השאיר מייל, הוא מקבל אישור (בהזמנות מזומן/מייל). בהזמנת אשראי תקבלו מייל ״הזמנה חדשה״ מיד, ומייל ״✅ התשלום התקבל״ אחרי ש-Cardcom מאשרת את התשלום.
@@ -244,7 +256,7 @@ npm run dev
 
 **בדיקה מקומית בלי Cardcom:** בהרצה מקומית, ״תשלום באשראי״ פותח דף בדיקה מדומה עם כפתורי ״הצליח״ ו״נכשל״. בפרודקשן הדף הזה כבוי.
 
-בלי `RESEND_API_KEY` (בפיתוח), המיילים מודפסים בטרמינל במקום להישלח.
+בלי שירות מייל מוגדר (בפיתוח), המיילים מודפסים בטרמינל במקום להישלח.
 
 ### 5. העלאה ל-Vercel
 
